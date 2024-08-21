@@ -1,24 +1,32 @@
 package notepad;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Notepad {
+public class Notepad implements ActionListener {
+    static boolean saved = true;
     JFrame frame;
     JTextPane textPane;
     JScrollPane scrollPane;
     JMenuBar menuBar;
     JMenu file, edit, view, format;
     JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFind, editReplace, editGoto, editSelectAll, formatWordWrap, formatFont, viewStatusBar;
+    FileFunctions fileFunctions;
+    static String notepadTitle = null;
     Notepad(){
         makeFrame();
         makeMenuBar();
         makeTextPane();
-
+        notepadTitle = "Untitled";
+        fileFunctions = new FileFunctions(this);
         frame.setVisible(true);
     }
 
     private void makeFrame(){
-        frame = new JFrame("Notepad");
+        frame = new JFrame("Untitled");
         frame.setSize(600, 600);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -26,6 +34,25 @@ public class Notepad {
     private void makeTextPane(){
         textPane = new JTextPane();
         scrollPane = new JScrollPane(textPane);
+        textPane.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                saved = false;
+                frame.setTitle("*" + notepadTitle);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                saved = false;
+                frame.setTitle("*" + notepadTitle);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                saved = false;
+                frame.setTitle("*" + notepadTitle);
+            }
+        });
         frame.add(scrollPane);
     }
 
@@ -45,10 +72,25 @@ public class Notepad {
 
     private void makeFileMenu(){
         fileNew = new JMenuItem("New");
+        fileNew.addActionListener(this);
+        fileNew.setActionCommand("New");
+
         fileOpen = new JMenuItem("Open...");
+        fileOpen.addActionListener(this);
+        fileOpen.setActionCommand("Open");
+
         fileSave = new JMenuItem("Save");
+        fileSave.addActionListener(this);
+        fileSave.setActionCommand("Save");
+
         fileSaveAs = new JMenuItem("Save As...");
+        fileSaveAs.addActionListener(this);
+        fileSaveAs.setActionCommand("SaveAs");
+
         fileClose = new JMenuItem("Close");
+        fileClose.addActionListener(this);
+        fileClose.setActionCommand("Close");
+
         file.add(fileNew); file.add(fileOpen); file.add(fileSave); file.add(fileSaveAs); file.add(fileClose);
     }
 
@@ -73,6 +115,18 @@ public class Notepad {
     private void makeViewMenu(){
         viewStatusBar = new JMenuItem("Show Status Bar");
         view.add(viewStatusBar);
+    }
+
+    public void actionPerformed(ActionEvent e){
+        String cmd = e.getActionCommand();
+
+        switch (cmd) {
+            case "New" -> fileFunctions.newFile();
+            case "Open" -> fileFunctions.openFile();
+            case "Save" -> fileFunctions.saveFile();
+            case "SaveAs" -> fileFunctions.saveAsFile();
+            case "Close" -> fileFunctions.closeFile();
+        }
     }
 
     public static void main(String[] args) {
