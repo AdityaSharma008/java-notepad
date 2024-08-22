@@ -53,9 +53,9 @@ public class FileFunctions {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(fileAddress + fileName));
             String line = null;
             while((line = bufferedReader.readLine()) != null){
-                StyledDocument styledDocument = (StyledDocument) notepad.textPane.getDocument();
-                styledDocument.insertString(styledDocument.getLength(), line, null);
+                notepad.textPane.append(line);
             }
+
             bufferedReader.close();
         } catch (Exception e){
             System.out.println();

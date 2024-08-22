@@ -5,18 +5,21 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Notepad implements ActionListener {
     static boolean saved = true;
     JFrame frame;
-    JTextPane textPane;
+    JTextArea textPane;
     JScrollPane scrollPane;
     JMenuBar menuBar;
     JMenu file, edit, view, format;
     JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFind, editReplace, editGoto, editSelectAll, formatWordWrap, formatFont, viewStatusBar;
     FileFunctions fileFunctions;
+    EditFunctions editFunctions;
     static String notepadTitle = null;
     Notepad(){
         makeFrame();
@@ -24,6 +27,7 @@ public class Notepad implements ActionListener {
         makeTextPane();
         notepadTitle = "Untitled";
         fileFunctions = new FileFunctions(this);
+        editFunctions = new EditFunctions(this);
         frame.setVisible(true);
     }
 
@@ -34,7 +38,7 @@ public class Notepad implements ActionListener {
     }
 
     private void makeTextPane(){
-        textPane = new JTextPane();
+        textPane = new JTextArea();
         scrollPane = new JScrollPane(textPane);
         textPane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -127,7 +131,6 @@ public class Notepad implements ActionListener {
         editCopy.setActionCommand("Copy");
 
         editPaste = new JMenuItem("Paste");
-        editPaste.setEnabled(false);
         editPaste.addActionListener(this);
         editPaste.setActionCommand("Paste");
 
@@ -179,6 +182,10 @@ public class Notepad implements ActionListener {
             case "Save" -> fileFunctions.saveFile();
             case "SaveAs" -> fileFunctions.saveAsFile();
             case "Close" -> fileFunctions.closeFile();
+            case "Cut" -> editFunctions.cutText();
+            case "Copy" -> editFunctions.copyText();
+            case "Paste" -> editFunctions.pasteText();
+            case "Delete" -> editFunctions.deleteText();
         }
     }
 
