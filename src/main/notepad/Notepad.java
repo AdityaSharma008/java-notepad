@@ -5,8 +5,6 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,7 +15,7 @@ public class Notepad implements ActionListener {
     JScrollPane scrollPane;
     JMenuBar menuBar;
     JMenu file, edit, view, format;
-    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFind, editReplace, editGoto, editSelectAll, formatWordWrap, formatFont, viewStatusBar;
+    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFindReplace, editGoto, editSelectAll, formatWordWrap, formatFont, viewStatusBar;
     FileFunctions fileFunctions;
     EditFunctions editFunctions;
     static String notepadTitle = null;
@@ -46,6 +44,7 @@ public class Notepad implements ActionListener {
                 saved = false;
                 editSelectAll.setEnabled(textPane.getText().length() > 0);
                 frame.setTitle("*" + notepadTitle);
+                editFindReplace.setEnabled(textPane.getText().length() > 0);
             }
 
             @Override
@@ -53,6 +52,7 @@ public class Notepad implements ActionListener {
                 saved = false;
                 editSelectAll.setEnabled(textPane.getText().length() > 0);
                 frame.setTitle("*" + notepadTitle);
+                editFindReplace.setEnabled(textPane.getText().length() > 0);
             }
 
             @Override
@@ -60,16 +60,14 @@ public class Notepad implements ActionListener {
                 saved = false;
                 editSelectAll.setEnabled(textPane.getText().length() > 0);
                 frame.setTitle("*" + notepadTitle);
+                editFindReplace.setEnabled(textPane.getText().length() > 0);
             }
         });
 
-        textPane.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent e) {
-                editCut.setEnabled(e.getMark() - e.getDot() != 0);
-                editCopy.setEnabled(e.getMark() - e.getDot() != 0);
-                editDelete.setEnabled(e.getMark() - e.getDot() != 0);
-            }
+        textPane.addCaretListener(e -> {
+            editCut.setEnabled(e.getMark() - e.getDot() != 0);
+            editCopy.setEnabled(e.getMark() - e.getDot() != 0);
+            editDelete.setEnabled(e.getMark() - e.getDot() != 0);
         });
 
         frame.add(scrollPane);
@@ -139,15 +137,10 @@ public class Notepad implements ActionListener {
         editDelete.addActionListener(this);
         editDelete.setActionCommand("Delete");
 
-        editFind = new JMenuItem("Find");
-        editFind.setEnabled(false);
-        editFind.addActionListener(this);
-        editFind.setActionCommand("Find");
-
-        editReplace = new JMenuItem("Replace");
-        editReplace.setEnabled(false);
-        editReplace.addActionListener(this);
-        editReplace.setActionCommand("Replace");
+        editFindReplace = new JMenuItem("Find & Replace");
+        editFindReplace.setEnabled(false);
+        editFindReplace.addActionListener(this);
+        editFindReplace.setActionCommand("FindReplace");
 
         editGoto = new JMenuItem("Goto");
         editGoto.setEnabled(false);
@@ -159,7 +152,7 @@ public class Notepad implements ActionListener {
         editSelectAll.addActionListener(this);
         editSelectAll.setActionCommand("SelectAll");
 
-        edit.add(editCut); edit.add(editCopy); edit.add(editPaste); edit.add(editDelete); edit.add(editFind); edit.add(editReplace); edit.add(editGoto); edit.add(editSelectAll);
+        edit.add(editCut); edit.add(editCopy); edit.add(editPaste); edit.add(editDelete); edit.add(editFindReplace); edit.add(editGoto); edit.add(editSelectAll);
     }
 
     private void makeFormatMenu(){
@@ -186,6 +179,7 @@ public class Notepad implements ActionListener {
             case "Copy" -> editFunctions.copyText();
             case "Paste" -> editFunctions.pasteText();
             case "Delete" -> editFunctions.deleteText();
+            case "FindReplace" -> new FindReplaceDialog(this);
         }
     }
 
