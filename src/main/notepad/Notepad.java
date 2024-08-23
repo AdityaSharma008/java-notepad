@@ -178,6 +178,7 @@ public class Notepad implements ActionListener {
             case "Paste" -> editFunctions.pasteText();
             case "Delete" -> editFunctions.deleteText();
             case "FindReplace" -> new FindReplaceDialog(this);
+            case "SelectAll" -> editFunctions.selectAllText();
         }
     }
 

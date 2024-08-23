@@ -6,6 +6,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.*;
 
 public class FindReplaceDialog implements ActionListener {
     Notepad notepad;
@@ -164,8 +165,8 @@ public class FindReplaceDialog implements ActionListener {
                 }
             }
             case "ReplaceAll" -> {
-                notepad.textPane.setText(text.replaceAll(toFind, newString));
-                text = notepad.textPane.getText();
+                text = text.replaceAll(Pattern.quote(toFind), Matcher.quoteReplacement(newString));
+                notepad.textPane.setText(text);
             }
         }
     }

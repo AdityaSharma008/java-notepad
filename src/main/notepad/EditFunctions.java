@@ -34,4 +34,8 @@ public class EditFunctions {
     void deleteText(){
         notepad.textPane.replaceSelection("");
     }
+
+    void selectAllText(){
+        notepad.textPane.selectAll();
+    }
 }
