@@ -1,7 +1,6 @@
 package notepad;
 
 import javax.swing.*;
-import javax.swing.text.StyledDocument;
 
 import java.awt.*;
 import java.io.BufferedReader;

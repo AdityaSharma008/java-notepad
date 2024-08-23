@@ -2,14 +2,16 @@ package notepad;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class FindReplaceDialog {
+public class FindReplaceDialog implements ActionListener {
     Notepad notepad;
     JDialog frDialog;
-    JButton btnFind, btnFindNext, btnReplace, btnReplaceAll;
+    JButton btnCancel, btnFindNext, btnReplace, btnReplaceAll;
     JTextField txtFind, txtReplace;
 
-    FindReplaceDialog(Notepad notepad) {
+    FindReplaceDialog(Notepad notepad){
         this.notepad = notepad;
         this.frDialog = new JDialog(notepad.frame);
 
@@ -26,10 +28,22 @@ public class FindReplaceDialog {
         JLabel lblReplace = new JLabel("Replace with: ");
         txtFind = new JTextField(20);
         txtReplace = new JTextField(20);
-        btnFind = new JButton("Find");
+
         btnFindNext = new JButton("Find Next");
+        btnFindNext.addActionListener(this);
+        btnFindNext.setActionCommand("FindNext");
+
+        btnCancel = new JButton("Cancel");
+        btnCancel.addActionListener(this);
+        btnCancel.setActionCommand("Cancel");
+
         btnReplace = new JButton("Replace");
+        btnReplace.addActionListener(this);
+        btnReplace.setActionCommand("Replace");
+
         btnReplaceAll = new JButton("Replace All");
+        btnReplace.addActionListener(this);
+        btnReplaceAll.setActionCommand("ReplaceAll");
 
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -54,10 +68,10 @@ public class FindReplaceDialog {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
-        frDialog.add(btnFind, gbc);
+        frDialog.add(btnFindNext, gbc);
 
         gbc.gridx = 2;
-        frDialog.add(btnFindNext, gbc);
+        frDialog.add(btnCancel, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 3;
@@ -69,5 +83,24 @@ public class FindReplaceDialog {
         frDialog.pack();
         frDialog.setLocationRelativeTo(notepad.frame);
         frDialog.setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e){
+        String cmd = e.getActionCommand();
+
+        switch (cmd) {
+            case "Cancel" -> {
+                frDialog.dispose();
+            }
+            case "FindNext" -> {
+                System.out.println("I am find next");
+            }
+            case "Replace" -> {
+                System.out.println("I am replace");
+            }
+            case "ReplaceAll" -> {
+                System.out.println("I am replace all");
+            }
+        }
     }
 }
