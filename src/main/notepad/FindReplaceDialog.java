@@ -127,8 +127,16 @@ public class FindReplaceDialog implements ActionListener {
 
     private void find(String toFind){
         startIndex = text.indexOf(toFind, oldIndex);
-        oldIndex = startIndex + 1;
-        notepad.textPane.select(startIndex, startIndex + toFind.length());
+        if (startIndex == -1 && oldIndex > 0) {
+            oldIndex = 0;
+            startIndex = text.indexOf(toFind, oldIndex);
+        }
+        if (startIndex != -1) {
+            notepad.textPane.select(startIndex, startIndex + toFind.length());
+            oldIndex = startIndex + toFind.length();
+        } else {
+            JOptionPane.showMessageDialog(frDialog, "Text not found!", "Find", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public void actionPerformed(ActionEvent e){
@@ -142,12 +150,18 @@ public class FindReplaceDialog implements ActionListener {
             case "Replace" -> {
                 if(notepad.textPane.getSelectedText() == null){
                     find(toFind);
-                    return;
+                    if(notepad.textPane.getSelectedText() != null){
+                        notepad.textPane.replaceSelection(newString);
+                        text = notepad.textPane.getText();
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(frDialog, "No more matches found!", "Replace", JOptionPane.INFORMATION_MESSAGE);
+                    }
                 }
                 else {
                     notepad.textPane.replaceSelection(newString);
+                    text = notepad.textPane.getText();
                 }
-                text = notepad.textPane.getText();
             }
             case "ReplaceAll" -> {
                 notepad.textPane.setText(text.replaceAll(toFind, newString));
