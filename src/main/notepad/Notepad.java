@@ -1,6 +1,8 @@
 package notepad;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
@@ -13,7 +15,8 @@ public class Notepad implements ActionListener {
     JScrollPane scrollPane;
     JMenuBar menuBar;
     JMenu file, edit, view, format;
-    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFindReplace, editGoto, editSelectAll, formatWordWrap, formatFont, viewStatusBar;
+    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFindReplace, editGoto, editSelectAll, formatFont, viewStatusBar;
+    JCheckBoxMenuItem formatWordWrap;
     FileFunctions fileFunctions;
     EditFunctions editFunctions;
     static String notepadTitle = null;
@@ -154,7 +157,9 @@ public class Notepad implements ActionListener {
     }
 
     private void makeFormatMenu(){
-        formatWordWrap = new JMenuItem("Word Wrap");
+        formatWordWrap = new JCheckBoxMenuItem("Word Wrap");
+        formatWordWrap.addChangeListener(changeListener);
+
         formatFont = new JMenuItem("Font");
         format.add(formatWordWrap); format.add(formatFont);
     }
@@ -181,6 +186,20 @@ public class Notepad implements ActionListener {
             case "SelectAll" -> editFunctions.selectAllText();
         }
     }
+
+    ChangeListener changeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if(formatWordWrap.getState()){
+                textPane.setLineWrap(true);
+                textPane.setWrapStyleWord(true);
+            }
+            else{
+                textPane.setLineWrap(false);
+                textPane.setWrapStyleWord(false);
+            }
+        }
+    };
 
     public static void main(String[] args) {
         new Notepad();
