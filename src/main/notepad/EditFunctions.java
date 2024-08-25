@@ -11,9 +11,13 @@ public class EditFunctions {
         this.notepad = notepad;
     }
 
+    void undo(){
+        notepad.undoManager.unexecute();
+    }
+
     void cutText(){
-        copyText();
-        notepad.textPane.replaceSelection("");
+        Command cutCommand = new CutCommand(notepad, notepad.textPane.getSelectionStart(), notepad.textPane.getSelectionEnd());
+        notepad.undoManager.executeCommand(cutCommand);
     }
 
     void copyText(){

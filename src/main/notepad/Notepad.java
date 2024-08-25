@@ -15,15 +15,18 @@ public class Notepad implements ActionListener {
     JScrollPane scrollPane;
     JMenuBar menuBar;
     JMenu file, edit, view, format;
-    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editCut, editCopy, editPaste, editDelete, editFindReplace, editGoto, editSelectAll, formatFont, viewStatusBar;
+    JMenuItem fileNew, fileOpen, fileSave, fileSaveAs, fileClose, editUndo, editCut, editCopy, editPaste, editDelete, editFindReplace, editGoto, editSelectAll, formatFont, viewStatusBar;
     JCheckBoxMenuItem formatWordWrap;
     FileFunctions fileFunctions;
     EditFunctions editFunctions;
+    Memento memento;
+    UndoManager undoManager;
     static String notepadTitle = null;
     Notepad(){
         makeFrame();
         makeMenuBar();
         makeTextPane();
+        undoManager = new UndoManager();
         notepadTitle = "Untitled";
         fileFunctions = new FileFunctions(this);
         editFunctions = new EditFunctions(this);
@@ -119,6 +122,10 @@ public class Notepad implements ActionListener {
     }
 
     private void makeEditMenu(){
+        editUndo = new JMenuItem("Undo");
+        editUndo.addActionListener(this);
+        editUndo.setActionCommand("Undo");
+
         editCut = new JMenuItem("Cut");
         editCut.setEnabled(false);
         editCut.addActionListener(this);
@@ -153,7 +160,7 @@ public class Notepad implements ActionListener {
         editSelectAll.addActionListener(this);
         editSelectAll.setActionCommand("SelectAll");
 
-        edit.add(editCut); edit.add(editCopy); edit.add(editPaste); edit.add(editDelete); edit.add(editFindReplace); edit.add(editGoto); edit.add(editSelectAll);
+        edit.add(editUndo); edit.add(editCut); edit.add(editCopy); edit.add(editPaste); edit.add(editDelete); edit.add(editFindReplace); edit.add(editGoto); edit.add(editSelectAll);
     }
 
     private void makeFormatMenu(){
@@ -169,6 +176,14 @@ public class Notepad implements ActionListener {
         view.add(viewStatusBar);
     }
 
+    public Memento save(){
+        return new Memento(textPane.getText());
+    }
+
+    public void restore(Memento memento){
+        this.textPane.setText(memento.getTextContent());
+    }
+
     public void actionPerformed(ActionEvent e){
         String cmd = e.getActionCommand();
 
@@ -178,6 +193,7 @@ public class Notepad implements ActionListener {
             case "Save" -> fileFunctions.saveFile();
             case "SaveAs" -> fileFunctions.saveAsFile();
             case "Close" -> fileFunctions.closeFile();
+            case "Undo" -> editFunctions.undo();
             case "Cut" -> editFunctions.cutText();
             case "Copy" -> editFunctions.copyText();
             case "Paste" -> editFunctions.pasteText();
