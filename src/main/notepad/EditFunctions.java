@@ -16,7 +16,7 @@ public class EditFunctions {
     }
 
     void cutText(){
-        Command cutCommand = new CutCommand(notepad, notepad.textPane.getSelectionStart(), notepad.textPane.getSelectionEnd());
+        Command cutCommand = new CutCommand(notepad);
         notepad.undoManager.executeCommand(cutCommand);
     }
 
@@ -27,16 +27,13 @@ public class EditFunctions {
     }
 
     void pasteText(){
-        try {
-            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-            notepad.textPane.insert(data, notepad.textPane.getCaretPosition());
-        } catch (Exception e){
-            System.out.println("There's nothing we can do.");
-        }
+        Command pasteCommand = new PasteCommand(notepad);
+        notepad.undoManager.executeCommand(pasteCommand);
     }
 
     void deleteText(){
-        notepad.textPane.replaceSelection("");
+        Command deleteCommand = new DeleteCommand(notepad);
+        notepad.undoManager.executeCommand(deleteCommand);
     }
 
     void selectAllText(){
